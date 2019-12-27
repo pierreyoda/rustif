@@ -8,4 +8,4 @@ edition = "2018"
 path = "src/lib.rs"
 
 [dependencies]
-failure = "0.1.5"
+failure = "0.1.6"
