@@ -11,4 +11,4 @@ path = "src/main.rs"
 [dependencies]
 rustifzm = { path = "../rustifzm" }
 clap = "2.33.0"
-failure = "0.1.6"
+failure = "0.1.7"
