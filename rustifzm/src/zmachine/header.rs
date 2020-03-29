@@ -49,8 +49,22 @@ impl TryFrom<u8> for ZMachineVersion {
 pub struct ZMachineHeader {
     /// Indicates the required Z-Machine version, from 1 for V1 to 8 for V8.
     version: ZMachineVersion,
+    /// Base of high memory.
+    high_memory_base: usize,
     /// Initial value of the Program Counter.
+    /// 
+    /// V6+: Packed address of initial "main" routine.
     initial_pc: usize,
+    /// Location of dictionary.
+    location_dictionary: usize,
+    /// Location of object table.
+    location_object_table: usize,
+    /// Location of global variables table.
+    location_global_variables_table: usize,
+    /// Base of static memory.
+    static_memory_base: usize,
+    /// (V2+) Location of abbreviations table.
+    location_abbreviations_table: usize,
 }
 
 impl ZMachineHeader {
@@ -58,7 +72,13 @@ impl ZMachineHeader {
         let version_raw = memory.read_byte(Byte(0x00))?;
         Ok(ZMachineHeader {
             version: ZMachineVersion::try_from(version_raw)?,
-            initial_pc: 0,
+            high_memory_base: memory.read_word(Word(0x04))? as usize,
+            initial_pc: memory.read_word(Word(0x06))? as usize,
+            location_dictionary: memory.read_word(Word(0x08))? as usize,
+            location_object_table: memory.read_word(Word(0x0A))? as usize,
+            location_global_variables_table: memory.read_word(Word(0x0C))? as usize,
+            static_memory_base: memory.read_word(Word(0x0E))? as usize,
+            location_abbreviations_table: memory.read_word(Word(0x18))? as usize,
         })
     }
 
