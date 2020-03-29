@@ -8,10 +8,15 @@ use crate::errors::{ZmErrorKind, ZmResult};
 pub enum ZMemoryAddress {
     /// An individual byte by absolute address.
     Byte(u16),
+    /// A word by absolute address, composed of two bytes.
+    ///
+    /// The Z-machine is Big Endian so (address) points to the Most Significant Byte,
+    /// and (address + 1) to the Least Significant Byte.
+    Word(u16),
     /// A word in the bottom 128K of memory equal to twice the address value.
     ///
     /// Only used in the abbreviations table.
-    Word(u16),
+    RelativeWord(u16),
     /// The packed relative location of a routine or string in high memory.
     Packed(u16),
 }
@@ -23,6 +28,7 @@ impl fmt::Display for ZMemoryAddress {
         match self {
             Byte(address) => write!(f, "ZMemoryAddress Byte = {:#X}", address),
             Word(address) => write!(f, "ZMemoryAddress Word = {:#X}", address),
+            RelativeWord(address) => write!(f, "ZMemoryAddress RelativeWord = {:#X}", address),
             Packed(address) => write!(f, "ZMemoryAddress Packed = {:#X}", address),
         }
     }
@@ -34,7 +40,7 @@ impl fmt::Display for ZMemoryAddress {
 /// http://inform-fiction.org/zmachine/standards/z1point1/sect01.html
 pub struct ZMemory {
     /// The raw array of bytes, which is divided into 3 regions:
-    /// - dynamic memory: starts at 0x00 and ends at the start of static memory.
+    /// - dynamic memory: starts at 0x00 and ends right before the start of static memory.
     ///   Must contains at least 64 bytes for the header (which ends at 0x40).
     ///   Unrestricted access for games.
     /// - static memory: starts at the address specified in the header up to either
@@ -58,7 +64,7 @@ impl ZMemory {
             Byte(a) => self
                 .buffer
                 .get(a as usize)
-                .map(|v| *v)
+                .cloned()
                 .ok_or(ZmErrorKind::MemoryInvalidAccess(a as usize).into()),
             _ => Err(ZmErrorKind::MemoryInvalidAddress(address).into()),
         }
@@ -71,6 +77,31 @@ impl ZMemory {
                 let lower = self.buffer.get((a + 1) as usize).ok_or(ZmErrorKind::MemoryInvalidAccess((a + 1) as usize))?;
                 Ok(((*upper as u16) << 8) | (*lower as u16))
             },
+            _ => Err(ZmErrorKind::MemoryInvalidAddress(address).into()),
+        }
+    }
+
+    pub fn write_byte(&mut self, address: ZMemoryAddress, value: u8) -> ZmResult<()> {
+        match address {
+            Byte(a) => self
+                .buffer
+                .get_mut(a as usize)
+                .and_then(|v| {
+                    *v = value;
+                    Some(())
+                })
+                .ok_or(ZmErrorKind::MemoryInvalidAccess(a as usize).into()),
+            _ => Err(ZmErrorKind::MemoryInvalidAddress(address).into()),
+        }
+    }
+
+    pub fn write_word(&mut self, address: ZMemoryAddress, value: u16) -> ZmResult<()> {
+        match address {
+            Word(a) => {
+                self.write_byte(Byte(a), ((value & 0xFF00) >> 8) as u8)?;
+                self.write_byte(Byte(a + 1), (value & 0x00FF) as u8)?;
+                Ok(())
+            }
             _ => Err(ZmErrorKind::MemoryInvalidAddress(address).into()),
         }
     }

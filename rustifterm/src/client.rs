@@ -16,4 +16,11 @@ impl IFTerminalClient {
         let vm = ZMachine::from_story_reader(&mut story_file)?;
         Ok(IFTerminalClient { vm })
     }
+
+    pub fn run(&mut self) -> IFtResult<()> {
+        for _ in 0..10 {
+            self.vm.step()?;
+        }
+        Ok(())
+    }
 }

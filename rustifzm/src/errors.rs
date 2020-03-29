@@ -63,7 +63,7 @@ pub enum ZmErrorKind {
     MachineIO(#[fail(cause)] std::io::Error),
     #[fail(display = "Unknown Z-machine version V{}", _0)]
     MachineUnknownVersion(u8),
-    #[fail(display = "Unsupported Z-machine version V{}", _0)]
+    #[fail(display = "Unsupported Z-machine version {}", _0)]
     MachineUnsupportedVersion(ZMachineVersion),
     #[fail(display = "Invalid memory access at address {:#X}", _0)]
     MemoryInvalidAccess(usize),

@@ -23,6 +23,6 @@ fn main() -> IFtResult<()> {
     let story_file_name = matches.value_of("STORY").unwrap();
     let story_file_path = Path::new(story_file_name);
 
-    let client = IFTerminalClient::with_story_file(&story_file_path)?;
-    Ok(())
+    let mut client = IFTerminalClient::with_story_file(&story_file_path)?;
+    client.run()
 }
