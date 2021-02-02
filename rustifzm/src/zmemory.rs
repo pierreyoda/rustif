@@ -73,10 +73,16 @@ impl ZMemory {
     pub fn read_word(&self, address: ZMemoryAddress) -> ZmResult<u16> {
         match address {
             Word(a) => {
-                let upper = self.buffer.get(a as usize).ok_or(ZmErrorKind::MemoryInvalidAccess(a as usize))?;
-                let lower = self.buffer.get((a + 1) as usize).ok_or(ZmErrorKind::MemoryInvalidAccess((a + 1) as usize))?;
+                let upper = self
+                    .buffer
+                    .get(a as usize)
+                    .ok_or(ZmErrorKind::MemoryInvalidAccess(a as usize))?;
+                let lower = self
+                    .buffer
+                    .get((a + 1) as usize)
+                    .ok_or(ZmErrorKind::MemoryInvalidAccess((a + 1) as usize))?;
                 Ok(((*upper as u16) << 8) | (*lower as u16))
-            },
+            }
             _ => Err(ZmErrorKind::MemoryInvalidAddress(address).into()),
         }
     }
@@ -112,7 +118,9 @@ mod tests {
     use super::*;
 
     fn init_memory() -> ZMemory {
-        ZMemory { buffer: vec![0x01, 0x02, 0x03, 0x04, 0x05, 0x06] }
+        ZMemory {
+            buffer: vec![0x01, 0x02, 0x03, 0x04, 0x05, 0x06],
+        }
     }
 
     #[test]
@@ -126,8 +134,14 @@ mod tests {
     #[test]
     fn test_read_word() {
         let memory = init_memory();
-        assert_eq!(memory.read_word(ZMemoryAddress::Word(0x01)).unwrap(), 0x0203);
-        assert_eq!(memory.read_word(ZMemoryAddress::Word(0x04)).unwrap(), 0x0506);
+        assert_eq!(
+            memory.read_word(ZMemoryAddress::Word(0x01)).unwrap(),
+            0x0203
+        );
+        assert_eq!(
+            memory.read_word(ZMemoryAddress::Word(0x04)).unwrap(),
+            0x0506
+        );
         assert_eq!(memory.read_word(ZMemoryAddress::Word(0x05)).is_err(), true);
     }
 }
