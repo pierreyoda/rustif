@@ -1,7 +1,7 @@
 use std::convert::TryFrom;
 use std::fmt;
 
-use crate::errors::{ZmError, ZmErrorKind, ZmResult};
+use crate::errors::{ZmError, ZmResult};
 use crate::zmemory::{ZMemory, ZMemoryAddress, ZMemoryAddress::*};
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
@@ -39,7 +39,7 @@ impl TryFrom<u8> for ZMachineVersion {
             6 => Ok(V6),
             7 => Ok(V7),
             8 => Ok(V8),
-            _ => Err(ZmErrorKind::MachineUnknownVersion(value).into()),
+            _ => Err(ZmError::MachineUnknownVersion(value).into()),
         }
     }
 }

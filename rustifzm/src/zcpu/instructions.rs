@@ -1,5 +1,5 @@
 use crate::zmemory::{ZMemory, ZMemoryAddress, ZMemoryAddress::*};
-use crate::{ZMachineVersion, ZMachineVersion::*, ZmErrorKind, ZmResult};
+use crate::{ZMachineVersion, ZMachineVersion::*, ZmError, ZmResult};
 
 /// The different instructions allowed by the Z-machine.
 ///

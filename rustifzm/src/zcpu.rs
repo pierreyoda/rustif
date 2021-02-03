@@ -3,7 +3,7 @@ mod instructions;
 use crate::{
     zmachine::ZMachineHeader,
     zmemory::{ZMemory, ZMemoryAddress::*},
-    ZMachineVersion, ZmErrorKind, ZmResult,
+    ZMachineVersion, ZmError, ZmResult,
 };
 use instructions::Operation;
 
@@ -25,7 +25,7 @@ impl ZCpu {
                 target: header.get_version(),
                 pc,
             }),
-            _ => Err(ZmErrorKind::MemoryInvalidAddress(header.get_initial_pc()).into()),
+            _ => Err(ZmError::MemoryInvalidAddress(header.get_initial_pc()).into()),
         }
     }
 

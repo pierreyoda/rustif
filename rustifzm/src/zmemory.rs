@@ -1,7 +1,7 @@
 use std::fmt;
 use std::io::Read;
 
-use crate::errors::{ZmErrorKind, ZmResult};
+use crate::{errors::ZmError, ZmResult};
 
 /// The different kinds of addresses in the Z-machine.
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
@@ -65,8 +65,8 @@ impl ZMemory {
                 .buffer
                 .get(a as usize)
                 .cloned()
-                .ok_or(ZmErrorKind::MemoryInvalidAccess(a as usize).into()),
-            _ => Err(ZmErrorKind::MemoryInvalidAddress(address).into()),
+                .ok_or(ZmError::MemoryInvalidAccess(a as usize).into()),
+            _ => Err(ZmError::MemoryInvalidAddress(address).into()),
         }
     }
 
@@ -76,14 +76,14 @@ impl ZMemory {
                 let upper = self
                     .buffer
                     .get(a as usize)
-                    .ok_or(ZmErrorKind::MemoryInvalidAccess(a as usize))?;
+                    .ok_or(ZmError::MemoryInvalidAccess(a as usize))?;
                 let lower = self
                     .buffer
                     .get((a + 1) as usize)
-                    .ok_or(ZmErrorKind::MemoryInvalidAccess((a + 1) as usize))?;
+                    .ok_or(ZmError::MemoryInvalidAccess((a + 1) as usize))?;
                 Ok(((*upper as u16) << 8) | (*lower as u16))
             }
-            _ => Err(ZmErrorKind::MemoryInvalidAddress(address).into()),
+            _ => Err(ZmError::MemoryInvalidAddress(address).into()),
         }
     }
 
@@ -96,8 +96,8 @@ impl ZMemory {
                     *v = value;
                     Some(())
                 })
-                .ok_or(ZmErrorKind::MemoryInvalidAccess(a as usize).into()),
-            _ => Err(ZmErrorKind::MemoryInvalidAddress(address).into()),
+                .ok_or(ZmError::MemoryInvalidAccess(a as usize).into()),
+            _ => Err(ZmError::MemoryInvalidAddress(address).into()),
         }
     }
 
@@ -108,7 +108,7 @@ impl ZMemory {
                 self.write_byte(Byte(a + 1), (value & 0x00FF) as u8)?;
                 Ok(())
             }
-            _ => Err(ZmErrorKind::MemoryInvalidAddress(address).into()),
+            _ => Err(ZmError::MemoryInvalidAddress(address).into()),
         }
     }
 }

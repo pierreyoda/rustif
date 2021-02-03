@@ -2,11 +2,7 @@ pub mod header;
 
 use std::io::Read;
 
-use crate::{
-    zcpu::ZCpu,
-    zmemory::{ZMemory, ZMemoryAddress::*},
-    ZmErrorKind, ZmResult,
-};
+use crate::{zcpu::ZCpu, zmemory::ZMemory, ZmError, ZmResult};
 pub use header::{ZMachineHeader, ZMachineVersion::*};
 
 /// The core of rustif's Z-machine interpreter.
@@ -35,7 +31,7 @@ impl ZMachine {
                 header,
                 cpu,
             }),
-            _ => Err(ZmErrorKind::MachineUnsupportedVersion(version).into()),
+            _ => Err(ZmError::MachineUnsupportedVersion(version).into()),
         }
     }
 
