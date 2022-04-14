@@ -18,7 +18,7 @@ pub struct ZMachine {
 impl ZMachine {
     /// Create a new Z-machine interpreter instance and try to load the given
     /// binary source into memory and initialize the VM according to the parsed header data.
-    pub fn from_story_reader(reader: &mut Read) -> ZmResult<Self> {
+    pub fn from_story_reader(reader: &mut dyn Read) -> ZmResult<Self> {
         let mut memory = ZMemory::from_story_reader(reader)?;
         let mut header = ZMachineHeader::from_memory(&memory)?;
         let version = header.get_version();
@@ -31,7 +31,7 @@ impl ZMachine {
                 header,
                 cpu,
             }),
-            _ => Err(ZmError::MachineUnsupportedVersion(version).into()),
+            _ => Err(ZmError::MachineUnsupportedVersion(version)),
         }
     }
 

@@ -25,7 +25,7 @@ impl ZCpu {
                 target: header.get_version(),
                 pc,
             }),
-            _ => Err(ZmError::MemoryInvalidAddress(header.get_initial_pc()).into()),
+            _ => Err(ZmError::MemoryInvalidAddress(header.get_initial_pc())),
         }
     }
 

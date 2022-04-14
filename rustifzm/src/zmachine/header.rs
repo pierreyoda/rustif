@@ -39,7 +39,7 @@ impl TryFrom<u8> for ZMachineVersion {
             6 => Ok(V6),
             7 => Ok(V7),
             8 => Ok(V8),
-            _ => Err(ZmError::MachineUnknownVersion(value).into()),
+            _ => Err(ZmError::MachineUnknownVersion(value)),
         }
     }
 }

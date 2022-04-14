@@ -65,8 +65,8 @@ impl ZMemory {
                 .buffer
                 .get(a as usize)
                 .cloned()
-                .ok_or(ZmError::MemoryInvalidAccess(a as usize).into()),
-            _ => Err(ZmError::MemoryInvalidAddress(address).into()),
+                .ok_or(ZmError::MemoryInvalidAccess(a as usize)),
+            _ => Err(ZmError::MemoryInvalidAddress(address)),
         }
     }
 
@@ -83,7 +83,7 @@ impl ZMemory {
                     .ok_or(ZmError::MemoryInvalidAccess((a + 1) as usize))?;
                 Ok(((*upper as u16) << 8) | (*lower as u16))
             }
-            _ => Err(ZmError::MemoryInvalidAddress(address).into()),
+            _ => Err(ZmError::MemoryInvalidAddress(address)),
         }
     }
 
@@ -92,12 +92,11 @@ impl ZMemory {
             Byte(a) => self
                 .buffer
                 .get_mut(a as usize)
-                .and_then(|v| {
+                .map(|v| {
                     *v = value;
-                    Some(())
                 })
-                .ok_or(ZmError::MemoryInvalidAccess(a as usize).into()),
-            _ => Err(ZmError::MemoryInvalidAddress(address).into()),
+                .ok_or(ZmError::MemoryInvalidAccess(a as usize)),
+            _ => Err(ZmError::MemoryInvalidAddress(address)),
         }
     }
 
@@ -108,7 +107,7 @@ impl ZMemory {
                 self.write_byte(Byte(a + 1), (value & 0x00FF) as u8)?;
                 Ok(())
             }
-            _ => Err(ZmError::MemoryInvalidAddress(address).into()),
+            _ => Err(ZmError::MemoryInvalidAddress(address)),
         }
     }
 }
@@ -128,7 +127,7 @@ mod tests {
         let memory = init_memory();
         assert_eq!(memory.read_byte(ZMemoryAddress::Byte(0x01)).unwrap(), 0x02);
         assert_eq!(memory.read_byte(ZMemoryAddress::Byte(0x05)).unwrap(), 0x06);
-        assert_eq!(memory.read_byte(ZMemoryAddress::Byte(0x06)).is_err(), true);
+        assert!(memory.read_byte(ZMemoryAddress::Byte(0x06)).is_err());
     }
 
     #[test]
@@ -142,6 +141,6 @@ mod tests {
             memory.read_word(ZMemoryAddress::Word(0x04)).unwrap(),
             0x0506
         );
-        assert_eq!(memory.read_word(ZMemoryAddress::Word(0x05)).is_err(), true);
+        assert!(memory.read_word(ZMemoryAddress::Word(0x05)).is_err());
     }
 }

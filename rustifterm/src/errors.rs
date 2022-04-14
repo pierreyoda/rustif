@@ -13,7 +13,7 @@ pub struct IFtError {
 }
 
 impl Fail for IFtError {
-    fn cause(&self) -> Option<&Fail> {
+    fn cause(&self) -> Option<&dyn Fail> {
         self.context.cause()
     }
 

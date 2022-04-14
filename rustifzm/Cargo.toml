@@ -2,7 +2,7 @@
 name = "rustifzm"
 version = "0.0.1"
 authors = ["pierreyoda <pierreyoda@users.noreply.github.com>"]
-edition = "2018"
+edition = "2021"
 
 [lib]
 path = "src/lib.rs"
