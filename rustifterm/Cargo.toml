@@ -10,5 +10,5 @@ path = "src/main.rs"
 
 [dependencies]
 rustifzm = { path = "../rustifzm" }
-clap = { version = "3.1.8", features = ["derive"] }
+clap = { version = "3.1.14", features = ["derive"] }
 failure = "0.1.8"
