@@ -17,6 +17,11 @@ pub enum ZmError {
     MemoryInvalidAccess(usize),
     #[error("Invalid or unexpected memory address {0}")]
     MemoryInvalidAddress(ZMemoryAddress),
+
+    #[error("Invalid Alphabet shift character {0}")]
+    StringInvalidAlphabetShiftCharacter(u8),
+    #[error("Invalid ZSCII character {0}")]
+    StringInvalidZSCIICharacterCode(u16),
 }
 
 pub type ZmResult<T> = Result<T, ZmError>;
