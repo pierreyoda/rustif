@@ -27,6 +27,10 @@ pub struct ZString {
 }
 
 impl ZString {
+    pub fn new(memory: &ZMemory, address: ZMemoryAddress) -> ZmResult<Self> {
+        todo!()
+    }
+
     /// Get the size of the string.
     pub fn len(&self) -> usize {
         self.content.len()

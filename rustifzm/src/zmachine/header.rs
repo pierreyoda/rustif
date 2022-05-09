@@ -215,7 +215,7 @@ impl ZMachineHeader {
 
     /// Sets the needed header data to the appropriate state after a game loading, restore or restart.
     ///
-    /// This means setting all values markes as "Rst" in the header format table (see R11.1).
+    /// This means setting all values marked as "Rst" in the header format table (see R11.1).
     pub fn reset(&mut self, memory: &mut ZMemory) -> ZmResult<()> {
         // set flags 1
         let flags1_raw = memory.read_byte(Byte(0x01))?;
@@ -248,5 +248,13 @@ impl ZMachineHeader {
 
     pub fn get_initial_pc(&self) -> ZMemoryAddress {
         self.initial_pc
+    }
+
+    pub fn get_location_object_table(&self) -> ZMemoryAddress {
+        self.location_object_table
+    }
+
+    pub fn get_location_abbreviations_table(&self) -> Option<ZMemoryAddress> {
+        self.location_abbreviations_table
     }
 }

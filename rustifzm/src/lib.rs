@@ -2,6 +2,7 @@ pub mod errors;
 pub mod zcpu;
 pub mod zmachine;
 pub mod zmemory;
+pub mod zobjects;
 pub mod zstring;
 
 pub use errors::{ZmError, ZmResult};

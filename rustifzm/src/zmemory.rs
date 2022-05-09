@@ -23,6 +23,15 @@ pub enum ZMemoryAddress {
 
 use self::ZMemoryAddress::*;
 
+impl ZMemoryAddress {
+    pub fn as_byte(&self) -> ZmResult<u16> {
+        match self {
+            Byte(address) => Ok(*address),
+            _ => Err(ZmError::MemoryInvalidAddress(*self)),
+        }
+    }
+}
+
 impl fmt::Display for ZMemoryAddress {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
