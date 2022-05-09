@@ -99,39 +99,25 @@ impl ZObject {
         address: ZMemoryAddress,
         version: ZMachineVersion,
     ) -> ZmResult<Self> {
-        let address_as_byte = address.as_byte()?;
         if version > ZMachineVersion::V3 {
             let text_length = memory.read_byte(address);
-            let text = ZString::new(memory, ZMemoryAddress::Byte(address_as_byte + 1))?;
+            let text = ZString::new(memory, address.offset_byte(1)?)?;
             todo!()
         } else {
-            let properties = vec![
-                ZObjectProperty::from_memory(
-                    1,
-                    ZMemoryAddress::Byte(address_as_byte + 7),
-                    memory,
-                    version,
-                )?,
-                ZObjectProperty::from_memory(
-                    2,
-                    ZMemoryAddress::Byte(address_as_byte + 8),
-                    memory,
-                    version,
-                )?,
-            ];
             Ok(Self {
-                attribute_flags: ((memory.read_word(ZMemoryAddress::Word(address_as_byte))?
-                    as u32)
-                    << 16)
-                    | (memory.read_word(ZMemoryAddress::Word(address_as_byte + 2))? as u32),
+                attribute_flags: ((memory.read_word(address.offset_word(0)?)? as u32) << 16)
+                    | (memory.read_word(address.offset_word(2)?)? as u32),
                 address,
                 index,
-                parent_index: memory.read_byte(ZMemoryAddress::Byte(address_as_byte + 4))?,
-                sibling_index: memory.read_byte(ZMemoryAddress::Byte(address_as_byte + 5))?,
-                child_index: memory.read_byte(ZMemoryAddress::Byte(address_as_byte + 6))?,
+                parent_index: memory.read_byte(address.offset_byte(4)?)?,
+                sibling_index: memory.read_byte(address.offset_byte(5)?)?,
+                child_index: memory.read_byte(address.offset_byte(6)?)?,
                 text_length: None,
                 text: None,
-                properties,
+                properties: vec![
+                    ZObjectProperty::from_memory(1, address.offset_byte(7)?, memory, version)?,
+                    ZObjectProperty::from_memory(2, address.offset_byte(8)?, memory, version)?,
+                ],
             })
         }
     }
@@ -204,9 +190,8 @@ impl ZObjectProperty {
             let length = (size_byte - property_number) / 32;
             debug_assert!(1 <= length && length <= 8);
             let mut data = vec![];
-            let address_as_byte = address.as_byte()?;
             for offset in 1..=(length as u16) {
-                data.push(memory.read_byte(ZMemoryAddress::Byte(address_as_byte + offset))?);
+                data.push(memory.read_byte(address.offset_byte(offset)?)?);
             }
             Ok(Self {
                 address,

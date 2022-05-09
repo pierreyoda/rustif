@@ -30,6 +30,20 @@ impl ZMemoryAddress {
             _ => Err(ZmError::MemoryInvalidAddress(*self)),
         }
     }
+
+    pub fn offset_byte(&self, offset: u16) -> ZmResult<Self> {
+        match self {
+            Byte(address) => Ok(ZMemoryAddress::Byte(address.wrapping_add(offset))),
+            _ => Err(ZmError::MemoryInvalidAddress(*self)),
+        }
+    }
+
+    pub fn offset_word(&self, offset: u16) -> ZmResult<Self> {
+        match self {
+            Byte(address) | Word(address) => Ok(ZMemoryAddress::Word(address.wrapping_add(offset))),
+            _ => Err(ZmError::MemoryInvalidAddress(*self)),
+        }
+    }
 }
 
 impl fmt::Display for ZMemoryAddress {
