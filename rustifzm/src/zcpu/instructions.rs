@@ -1,13 +1,6 @@
 use crate::zmemory::{ZMemory, ZMemoryAddress, ZMemoryAddress::*};
 use crate::{ZMachineVersion, ZMachineVersion::*, ZmError, ZmResult};
 
-/// The different instructions allowed by the Z-machine.
-///
-/// This internal representation allows for efficient and human-readable dispatching,
-/// and will facilitate potential future tooling like a disassembler.
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub enum ZInstruction {}
-
 /// The different types of operand for an operation.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum InstructionOperand {
@@ -84,7 +77,6 @@ impl Operation {
     where
         F: FnMut() -> ZmResult<u8>,
     {
-        use InstructionOperand::*;
         let opcode_msb = next_byte()?;
         let form = InstructionForm::from_opcode(opcode_msb, target);
         let (opcode_number, operands_count) = match form {
@@ -108,7 +100,6 @@ impl Operation {
             }
             InstructionForm::Extended => (next_byte()?, InstructionOperandCount::Variable), // R4.3.4
         };
-        println!("TEST operation OP={:#X} FORM={:?}", opcode_number, form);
         Ok(Operation {
             form,
             opcode_number,

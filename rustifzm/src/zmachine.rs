@@ -26,7 +26,7 @@ impl ZMachine {
         header.reset(&mut memory)?;
         let cpu = ZCpu::from_header(&header)?;
         match version {
-            V3 => Ok(ZMachine {
+            V1 | V2 | V3 | V4 | V5 | V6 | V7 | V8 => Ok(ZMachine {
                 memory,
                 header,
                 cpu,

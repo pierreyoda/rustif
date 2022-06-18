@@ -1,4 +1,5 @@
 mod instructions;
+mod opcodes;
 
 use crate::{
     zmachine::ZMachineHeader,
@@ -14,7 +15,7 @@ use instructions::Operation;
 pub struct ZCpu {
     /// The targeted Z-machine version.
     target: ZMachineVersion,
-    /// The Program Counter points to the current instruction.
+    /// The Program Counter points to the absolute address of the current instruction.
     pc: u16,
 }
 
@@ -31,15 +32,27 @@ impl ZCpu {
 
     /// Fetch, decode and execute the next instruction.
     pub fn step(&mut self, memory: &mut ZMemory) -> ZmResult<()> {
-        let operation = self.fetch_instruction(memory)?;
+        let operation = self.fetch_decoded_instruction(memory)?;
+        self.execute_decoded_instruction(memory, &operation)?;
         Ok(())
     }
 
-    fn fetch_instruction(&mut self, memory: &ZMemory) -> ZmResult<Operation> {
+    fn fetch_decoded_instruction(&mut self, memory: &ZMemory) -> ZmResult<Operation> {
         Operation::decoded(self.target, || {
             let next = memory.read_byte(Byte(self.pc))?;
             self.pc = self.pc.wrapping_add(1);
             Ok(next)
         })
     }
+
+    fn execute_decoded_instruction(
+        &mut self,
+        memory: &mut ZMemory,
+        operation: &Operation,
+    ) -> ZmResult<()> {
+        Ok(())
+    }
 }
+
+#[cfg(test)]
+mod tests {}
