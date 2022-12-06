@@ -100,7 +100,7 @@ impl ZObject {
         version: ZMachineVersion,
     ) -> ZmResult<Self> {
         if version > ZMachineVersion::V3 {
-            let text_length = memory.read_byte(address);
+            let text_length = memory.read_byte(address)?;
             let text = ZString::new(memory, address.offset_byte(1)?)?;
             todo!()
         } else {
@@ -188,7 +188,7 @@ impl ZObjectProperty {
         } else {
             let size_byte = memory.read_byte(address)?;
             let length = (size_byte - property_number) / 32;
-            debug_assert!(1 <= length && length <= 8);
+            debug_assert!((1..=8).contains(&length));
             let mut data = vec![];
             for offset in 1..=(length as u16) {
                 data.push(memory.read_byte(address.offset_byte(offset)?)?);
